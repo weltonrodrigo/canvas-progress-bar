@@ -17,14 +17,16 @@
 					width: 600, 
 					height: 350
 				});
-				var layer = new Kinetic.Layer();
-				var size = 100;
-				var interval = size*0.05;
+				var layer = new Kinetic.Layer();	
+				var size = 19/4;
+				var interval = size*0.11;
+				var stroke = size*0.20;
 
 				for (var i=0; i < 4; i++){
 					layer.add(new Kinetic.Seta(
 								{ points: [(interval+size)*i, 0],
-									size: size
+									size: size,
+									strokeWidth: stroke
 									}
 					));
 				}
