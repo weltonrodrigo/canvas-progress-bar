@@ -1,9 +1,6 @@
 <html>
 	<head>
 		<style>
-			#container{
-				border: 1px solid black;
-			}
 		</style>
 		<script type='text/javascript' src='include\jquery-1.8.0.min.js'></script>
 		<script type='text/javascript' src='include\kinetic-core.js'></script>
@@ -17,21 +14,45 @@
 					width: 600, 
 					height: 350
 				});
-				var layer = new Kinetic.Layer();	
-				var size = 19/4;
-				var interval = size*0.11;
-				var stroke = size*0.20;
 
-				for (var i=0; i < 4; i++){
-					layer.add(new Kinetic.Seta(
-								{ points: [(interval+size)*i, 0],
-									size: size,
-									strokeWidth: stroke
-									}
-					));
+				var howmany  = 5;
+				var spacing  = 0;
+				var howbold  = .2;
+
+				var w = c.getWidth();
+				var h = howmany;
+				var s = spacing;
+				var b = howbold;
+
+				var netSize      = w / ( ( h + (h-1)*s ) * (1+b));
+				var strokeWidth  = netSize * b; 
+
+				var offset = netSize + netSize * spacing + strokeWidth/2;
+
+				var layer = new Kinetic.Layer();	
+
+				var seta;
+				for (var i=0; i < howmany; i++){
+					seta = new Kinetic.Seta({
+								size: netSize, 
+								points: [( i * offset) + strokeWidth/2, 0], 
+								strokeWidth: strokeWidth, 
+								});
+					seta.on('mouseover', function(){
+							this.setFill('lightblue');
+							layer.draw();
+							});
+					seta.on('mouseout', function(){
+							this.setFill('orange');
+							layer.draw();
+							});
+
+					layer.add(seta);
 				}
 
 				c.add(layer);
+
+				$('canvas').css({'border': '1px solid black'});
 			</script>
 	</body>
 
