@@ -1,0 +1,36 @@
+<html>
+	<head>
+		<style>
+			#container{
+				border: 1px solid black;
+			}
+		</style>
+		<script type='text/javascript' src='include\jquery-1.8.0.min.js'></script>
+		<script type='text/javascript' src='include\kinetic-core.js'></script>
+		<script type='text/javascript' src='include\Seta.js'></script>
+	</head>
+	<body>
+		<div id='container'>
+			<script type='text/javascript'>
+				var c = new Kinetic.Stage({
+					container: 'container', 
+					width: 600, 
+					height: 350
+				});
+				var layer = new Kinetic.Layer();
+				var size = 100;
+				var interval = size*0.05;
+
+				for (var i=0; i < 4; i++){
+					layer.add(new Kinetic.Seta(
+								{ points: [(interval+size)*i, 0],
+									size: size
+									}
+					));
+				}
+
+				c.add(layer);
+			</script>
+	</body>
+
+</html>
