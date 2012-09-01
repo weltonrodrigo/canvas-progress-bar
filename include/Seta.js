@@ -12,8 +12,6 @@ Kinetic.Seta.prototype = {
 			stroke: 'black',
 		});
 
-		this.shapeType = "Seta";
-
 		// Calculate points
 	  config.points = this._calcPoints(config);
 
@@ -23,14 +21,17 @@ Kinetic.Seta.prototype = {
 		// call super constructor
 		Kinetic.Polygon.call(this, config);
 
-		var dois = 1 + 1;
+		this.shapeType = "Seta";
 	
 	}, 
 	_calcStroke: function(config){
 		// Let user specify a width.
-		if (config.strokeWidth) {
+		if (config.strokeWidth !== undefined) {
+			if (config.strokeWidth === 0){
+				delete this.attrs.stroke;
+			}
 			return config.strokeWidth;
-		}else{		
+		}else{
 			return 0.25 * (config.size || this.attrs.size);
 		}
 	}, 
