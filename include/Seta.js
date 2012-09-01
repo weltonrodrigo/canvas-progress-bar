@@ -13,7 +13,6 @@ Kinetic.Seta.prototype = {
 		});
 
 		this.shapeType = "Seta";
-		config.drawFunc = this.drawFunc;
 
 		// Calculate points
 	  config.points = this._calcPoints(config);
@@ -22,7 +21,7 @@ Kinetic.Seta.prototype = {
 		config.strokeWidth = this._calcStroke(config);
 
 		// call super constructor
-		Kinetic.Shape.call(this, config);
+		Kinetic.Polygon.call(this, config);
 
 		var dois = 1 + 1;
 	
@@ -65,17 +64,7 @@ Kinetic.Seta.prototype = {
 			points.push( offsetY + seta[p+1]);
 		}
 		return points;
-	},
-	drawFunc: function(context) {
-			context.beginPath();
-			context.moveTo(this.attrs.points[0].x, this.attrs.points[0].y);
-			for(var n = 1; n < this.attrs.points.length; n++) {
-					context.lineTo(this.attrs.points[n].x, this.attrs.points[n].y);
-			}
-			context.closePath();
-			this.fill(context);
-			this.stroke(context);
 	}
 };
-Kinetic.Global.extend(Kinetic.Seta, Kinetic.Shape);
+Kinetic.Global.extend(Kinetic.Seta, Kinetic.Polygon);
 Kinetic.Node.addGettersSetters(Kinetic.Seta, ['initial', 'points', 'size'])
