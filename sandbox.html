@@ -9,48 +9,67 @@
 	<body>
 		<div id='container'>
 			<script type='text/javascript'>
+				
 				var c = new Kinetic.Stage({
 					container: 'container', 
 					width: 600, 
 					height: 350
 				});
 
-				var howmany  = 5;
-				var spacing  = 0;
-				var howbold  = .2;
+				var howmany  = 2;
+				var spacing  = -0.20;
+				var howbold  = 0.25;
 
 				var w = c.getWidth();
-				var h = howmany;
-				var s = spacing;
+				var n = howmany;
+				var i = spacing;
 				var b = howbold;
 
-				var netSize      = w / ( ( h + (h-1)*s ) * (1+b));
+				var netSize      = w / ( (n-1)*(1+b+i) + (1+b) );
+				//var netSize      = w / (n*(1+b));
 				var strokeWidth  = netSize * b; 
 
-				var offset = netSize + netSize * spacing + strokeWidth/2;
+				var space = netSize*i;
+				var offset = netSize + spacing * netSize + strokeWidth/2;
 
 				var layer = new Kinetic.Layer();	
+				c.add(layer);
 
+				var rect;
 				var seta;
 				for (var i=0; i < howmany; i++){
+//					rect = new Kinetic.Rect({
+//							width:  netSize,
+//							height: netSize, 
+//							x: offset*i + (strokeWidth/2)*(1+i), 
+//							y: 0 + strokeWidth/2, 
+//							strokeWidth: strokeWidth, 
+//							fill: 'orange',
+//							});
 					seta = new Kinetic.Seta({
-								size: netSize, 
-								points: [( i * offset) + strokeWidth/2, 0], 
-								strokeWidth: strokeWidth, 
-								});
-					seta.on('mouseover', function(){
-							this.setFill('lightblue');
-							layer.draw();
-							});
-					seta.on('mouseout', function(){
-							this.setFill('orange');
-							layer.draw();
-							});
+						points: [
+							offset*i + (strokeWidth/2)*(1+i),
+							strokeWidth/2
+						], 
+						strokeWidth: strokeWidth, 
+						size: netSize, 
+						});
 
 					layer.add(seta);
+					layer.draw();
+//					rect.on('mouseover', function(){
+//							this.setFill('lightblue');
+//							this.setStroke('blue');
+//							layer.draw();
+//							});
+//					rect.on('mouseout', function(){
+//							this.setFill('orange');
+//							this.setStroke('green');
+//							layer.draw();
+//						});
+
 				}
 
-				c.add(layer);
 
 				$('canvas').css({'border': '1px solid black'});
 			</script>
