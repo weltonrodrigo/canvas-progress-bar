@@ -21,12 +21,12 @@ Kinetic.CircleArc.prototype = {
 
 			context.beginPath();
 			context.arc(
-					this.attrs.x, this.attrs.y,
+					0, 0,
 					this.attrs.radius,
 					this.attrs.startAngle, this.attrs.endAngle,
 					this.attrs.counterClockWise
 					);
-			context.lineTo(this.attrs.x, this.attrs.y);
+			context.lineTo(0, 0);
 			context.closePath();
 
 			this.fill(context);

@@ -40,16 +40,17 @@ Kinetic.Seta.prototype = {
 
 		var size   = this.attrs.size;
 		var quarter = size/4;
+		var half = size/2;
 
 		// This is an arrow:
 		var seta = [
 			//X, Y
-			0, 0,
-			3*quarter, 0,
-			size, size/2,
-			3*quarter, size,
-			0, size,
-			quarter, size/2
+			-half, -half,
+			quarter, -half,
+			half, 0,  
+			quarter, half,
+			-half, half,
+			-quarter, 0
 		];
 
 		var points = [];
