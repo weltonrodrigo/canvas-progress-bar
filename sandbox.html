@@ -5,73 +5,125 @@
 		<script type='text/javascript' src='include\jquery-1.8.0.min.js'></script>
 		<script type='text/javascript' src='include\kinetic-core.js'></script>
 		<script type='text/javascript' src='include\Seta.js'></script>
+		<script type='text/javascript' src='include\CircleArc.js'></script>
+		<script type='text/javascript' src='include\canvas-grid.js'></script>
 	</head>
 	<body>
 		<div id='container'>
 			<script type='text/javascript'>
-				
+
+				function grid(canvas){
+					var gridder = new CanvasGrid();
+					gridder.grid(canvas);
+				}
+
+				function randColor(){
+					return "#"+((1<<24)*Math.random()|0).toString(16);
+				}
+
 				var c = new Kinetic.Stage({
 					container: 'container', 
-					width: 600, 
-					height: 350
+					width: $(window).width(), 
+					height: $(window).height(), 
 				});
 
-				var howmany  = 2;
-				var spacing  = -0.20;
-				var howbold  = 0.25;
+				var howmany  = 3;
+				var spacing  = -.25;
+				var howbold  = .1;
 
 				var w = c.getWidth();
 				var n = howmany;
 				var i = spacing;
 				var b = howbold;
 
-				var netSize      = w / ( (n-1)*(1+b+i) + (1+b) );
-				//var netSize      = w / (n*(1+b));
-				var strokeWidth  = netSize * b; 
+				var netSize = w / ( (n-1)*(1+b+i) + (1+b) );
 
+				var strokeWidth = netSize * howbold;
 				var space = netSize*i;
-				var offset = netSize + spacing * netSize + strokeWidth/2;
+
+				var offset = netSize + space + strokeWidth/2;
 
 				var layer = new Kinetic.Layer();	
 				c.add(layer);
 
-				var rect;
+				layer.on('draw', function(){
+						});
+
+				var circleArc = new Kinetic.CircleArc({
+					radius: 50, 
+					x: 100, 
+					y: 100, 
+					startAngle: Math.PI, 
+					endAngle: Math.PI + 2 * Math.PI / 1.5, 
+					fill: randColor(), 
+					stroke: randColor(), 
+					draggable: true, 
+					});
+
+				layer.add(circleArc);
+
 				var seta;
 				for (var i=0; i < howmany; i++){
-//					rect = new Kinetic.Rect({
-//							width:  netSize,
-//							height: netSize, 
-//							x: offset*i + (strokeWidth/2)*(1+i), 
-//							y: 0 + strokeWidth/2, 
-//							strokeWidth: strokeWidth, 
-//							fill: 'orange',
-//							});
 					seta = new Kinetic.Seta({
-						points: [
-							offset*i + (strokeWidth/2)*(1+i),
-							strokeWidth/2
-						], 
-						strokeWidth: strokeWidth, 
+						x: offset*i + (strokeWidth/2)*(1+i),
+						y: strokeWidth/2,  
+						strokeWidthProportion: b, 
 						size: netSize, 
+						draggable: true, 
+						fill: randColor(),  
+						stroke: randColor(),
 						});
 
 					layer.add(seta);
-					layer.draw();
-//					rect.on('mouseover', function(){
-//							this.setFill('lightblue');
-//							this.setStroke('blue');
-//							layer.draw();
-//							});
-//					rect.on('mouseout', function(){
-//							this.setFill('orange');
-//							this.setStroke('green');
-//							layer.draw();
-//						});
+				}
 
+				for (var i in layer.children){
+					shape = layer.children[i];
+					shape.on('mouseover', function(){
+							this.setFill(randColor());
+							this.setStroke(randColor());
+							layer.draw();
+						grid($('canvas').get(0))
+							});
+					shape.on('mouseout', function(){
+							this.setFill(randColor());
+							this.setStroke(randColor());
+							layer.draw();
+						grid($('canvas').get(0))
+						});
+					shape.on('click', function(){
+							var stageWidth  = this.getStage().getWidth();
+							var stageHeight = this.getStage().getHeight();
+							var size = Math.random() * (stageWidth/2.5);
+							var x = Math.random() * (stageWidth - size); 
+							var y = Math.random() * (stageHeight - size);
+
+							if (this.shapeType==='CircleArc'){
+								var radius = size;
+								x = Math.random() * (stageWidth - radius);
+							  y = Math.random() * (stageHeight - radius);
+							}
+
+							this.transitionTo({
+									rotation: Math.random() * 2 * Math.PI, 
+									x: x, 
+									y: y, 
+									size: size, 
+									radius: radius, 
+									startAngle: Math.random() * 2 * Math.PI, 
+									endAngle: Math.random() * 2 * Math.PI, 
+									duration: 1, 
+									easing: 'ease-in-out', 
+								});
+						grid($('canvas').get(0))
+							});
+					layer.draw();
+						grid($('canvas').get(0))
 				}
 
 
 				$('canvas').css({'border': '1px solid black'});
+				grid($('canvas').get(0));
 			</script>
 	</body>
 
