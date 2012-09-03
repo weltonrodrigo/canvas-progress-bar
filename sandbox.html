@@ -1,6 +1,13 @@
 <html>
 	<head>
 		<style>
+			canvas{
+				border: 1px solid black
+			}
+			#container{
+				background-image: 
+					url("http://blogs.adobe.com/toddkopriva/radial_rays.png");
+			}
 		</style>
 		<script type='text/javascript' src='include\jquery-1.8.0.min.js'></script>
 		<script type='text/javascript' src='include\kinetic-core.js'></script>
@@ -11,10 +18,36 @@
 	<body>
 		<div id='container'>
 			<script type='text/javascript'>
+					function onClick(){
+
+						var layer = this.getParent();
+						var stageWidth  = layer.getStage().getWidth();
+						var stageHeight = layer.getStage().getHeight();
+
+						for (var s in layer.children){
+
+							var size = Math.random() * (stageWidth/2);
+							var x = Math.random() * (stageWidth - size); 
+							var y = Math.random() * (stageHeight - size);
+
+							layer.children[s].transitionTo({
+									rotation: Math.random() * 2 * Math.PI, 
+									x: x, 
+									y: y, 
+									size: size, 
+									radius: size, 
+									startAngle: Math.random() * 2 * Math.PI, 
+									endAngle: Math.random() * 4 * Math.PI, 
+									duration: 1, 
+									easing: 'ease-in-out', 
+									strokeWidth: size * 0.1
+									});
+							}
+					}
 
 				function grid(canvas){
 					var gridder = new CanvasGrid();
-					gridder.grid(canvas);
+					//gridder.grid(canvas);
 				}
 
 				function randColor(){
@@ -44,23 +77,18 @@
 				var offset = netSize + space + strokeWidth/2;
 
 				var layer = new Kinetic.Layer();	
-				c.add(layer);
-
-				layer.on('draw', function(){
-						});
 
 				var circleArc = new Kinetic.CircleArc({
 					radius: 50, 
 					x: 100, 
 					y: 100, 
 					startAngle: Math.PI, 
-					endAngle: Math.PI + 2 * Math.PI / 1.5, 
 					fill: randColor(), 
 					stroke: randColor(), 
 					draggable: true, 
 					});
-
 				layer.add(circleArc);
+
 
 				var seta;
 				for (var i=0; i < howmany; i++){
@@ -72,7 +100,11 @@
 						draggable: true, 
 						fill: randColor(),  
 						stroke: randColor(),
-						});
+						offset: {
+							x: -netSize/2,
+							y: -netSize/2
+						}
+					});
 
 					layer.add(seta);
 				}
@@ -83,47 +115,22 @@
 							this.setFill(randColor());
 							this.setStroke(randColor());
 							layer.draw();
-						grid($('canvas').get(0))
 							});
 					shape.on('mouseout', function(){
 							this.setFill(randColor());
 							this.setStroke(randColor());
 							layer.draw();
-						grid($('canvas').get(0))
 						});
-					shape.on('click', function(){
-							var stageWidth  = this.getStage().getWidth();
-							var stageHeight = this.getStage().getHeight();
-							var size = Math.random() * (stageWidth/2.5);
-							var x = Math.random() * (stageWidth - size); 
-							var y = Math.random() * (stageHeight - size);
-
-							if (this.shapeType==='CircleArc'){
-								var radius = size;
-								x = Math.random() * (stageWidth - radius);
-							  y = Math.random() * (stageHeight - radius);
-							}
-
-							this.transitionTo({
-									rotation: Math.random() * 2 * Math.PI, 
-									x: x, 
-									y: y, 
-									size: size, 
-									radius: radius, 
-									startAngle: Math.random() * 2 * Math.PI, 
-									endAngle: Math.random() * 2 * Math.PI, 
-									duration: 1, 
-									easing: 'ease-in-out', 
-								});
-						grid($('canvas').get(0))
-							});
-					layer.draw();
-						grid($('canvas').get(0))
+					shape.on('click', onClick );
 				}
 
+				c.add(layer);
 
-				$('canvas').css({'border': '1px solid black'});
-				grid($('canvas').get(0));
+				interval = window.setInterval( function(){
+						onClick.call(circleArc)
+						}, 1500);
+
+
 			</script>
 	</body>
 
