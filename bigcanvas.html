@@ -1,20 +1,44 @@
 <html>
 	<head>
 		<style>
+			canvas{
+				background: lightblue;
+				border: 1px solid black;
+			}
 		</style>
 		<script type='text/javascript' src='include\jquery-1.8.0.min.js'></script>
 		<script type='text/javascript' src='include\kinetic-core.js'></script>
-		<script type='text/javascript' src='include\coffee-script.js'> </script>
+		<script type='text/javascript' src='include\CircleArc.js'> </script>
 	</head>
 	<body>
 		<div id='container'>
-			<script type='text/coffeescript'>
-				scope = new Kinetic.Scope
-					'container': 'container'
-					'width': 600
-					'height': 600
+			<script type='text/javascript'>
+				var stage = new Kinetic.Stage({
+					container: 'container', 
+					width: 300, 
+					height: 300, 
+					});
 
-				console.log scope
+				var circle = new Kinetic.CircleArc({
+					radius: 150, 
+					x: 150, 
+					y: 150, 
+					startAngle: Math.PI,
+					endAngle: Math.PI/2, 
+					fill: 'black'
+					});
+			
+//				var circle2 = new Kinetic.Circle({
+//					radius: 10, 
+//					x: 150, 
+//					y: 150, 
+//					fill: 'yellow'
+//					});
+
+				var layer = new Kinetic.Layer();
+				layer.add(circle);
+				layer.add(circle2);
+				stage.add(layer);
 
 			</script>
 	</body>
