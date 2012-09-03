@@ -6,17 +6,17 @@ Kinetic.Seta.prototype = {
 	_initSeta: function(config){
 
 		this.setDefaultAttrs({
-			points: [0, 0], 
+			x: 0, 
+			y: 0, 
 			size: 10, 
 			fill: 'orange',
 			stroke: 'black',
+			fixStrokeWidth: false, 
+			strokeWidthProportion: 0.25, 
 		});
 
-		// Calculate points
-	  config.points = this._calcPoints(config);
-
-		// Calculate strokeWidth
-		config.strokeWidth = this._calcStroke(config);
+		// Init strokeWidth
+		this._initStroke(config);
 
 		// call super constructor
 		Kinetic.Polygon.call(this, config);
@@ -24,20 +24,21 @@ Kinetic.Seta.prototype = {
 		this.shapeType = "Seta";
 	
 	}, 
-	_calcStroke: function(config){
-		// Let user specify a width.
-		if (config.strokeWidth !== undefined) {
-			if (config.strokeWidth === 0){
-				delete this.attrs.stroke;
+	_initStroke:
+		function(config){
+			if (config.strokeWidth !== undefined) {
+				this.attrs.fixStrokeWidth = true;
 			}
-			return config.strokeWidth;
-		}else{
-			return 0.25 * (config.size || this.attrs.size);
-		}
+		}, 
+	_calcStroke:
+		function(){
+			if(!this.attrs.fixStrokeWidth){
+				return this.attrs.strokeWidthProportion * this.attrs.size;
+			}
 	}, 
-	_calcPoints: function(config){
+	_calcPoints: function(){
 
-		var size   = config.size || this.attrs.size;
+		var size   = this.attrs.size;
 		var quarter = size/4;
 
 		// This is an arrow:
@@ -51,21 +52,19 @@ Kinetic.Seta.prototype = {
 			quarter, size/2
 		];
 
-		// Upper left point of the arrow.
-		// Use defaults if not specified
-		var init = (config.points || this.attrs.points);
-		offsetX = init[0];
-		offsetY = init[1];
-
 		var points = [];
 
 		// Populate config.points with an arrow plus offset.
 		for (var p = 0; p <seta.length; p +=2){
-			points.push( offsetX + seta[p]  );
-			points.push( offsetY + seta[p+1]);
+			points.push( { x: seta[p],  y: seta[p+1] } );
 		}
 		return points;
-	}
+	}, 
+	drawFunc: function(context){
+			this.attrs.points = this._calcPoints();
+			this.attrs.strokeWidth = this._calcStroke();
+			Kinetic.Polygon.prototype.drawFunc.call(this, context);
+		}, 
 };
 Kinetic.Global.extend(Kinetic.Seta, Kinetic.Polygon);
-Kinetic.Node.addGettersSetters(Kinetic.Seta, ['initial', 'points', 'size'])
+Kinetic.Node.addGettersSetters(Kinetic.Seta, ['initial', 'size'])
