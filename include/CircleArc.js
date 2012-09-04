@@ -23,7 +23,7 @@ Kinetic.CircleArc.prototype = {
 			context.arc(
 					0, 0,
 					this.attrs.radius,
-					this.attrs.startAngle, this.attrs.endAngle,
+					this.attrs.startAngle, this.attrs.endAngle % (2*Math.PI),
 					this.attrs.counterClockWise
 					);
 			context.lineTo(0, 0);
@@ -36,4 +36,5 @@ Kinetic.CircleArc.prototype = {
 Kinetic.Global.extend(Kinetic.CircleArc, Kinetic.Shape);
 
 // add getters setters
-Kinetic.Node.addGettersSetters(Kinetic.CircleArc, ['startAngle', 'endAngle', 'radius']);
+Kinetic.Node.addGettersSetters(
+		Kinetic.CircleArc, ['startAngle', 'endAngle', 'radius']);
