@@ -1,9 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 	<head>
 		<style>
 			canvas{
 				background: lightblue;
 				border: 1px solid black;
+			}
+			#switch{
+				position: absolute;
+				top: 10px;
+				left: 10px;
+				display: block;
+				z-index: 10
+			}
+			#revers{
+				position: absolute;
+				top: 10px;
+				left: 242px;
+				display: block;
+				z-index: 10
 			}
 		</style>
 		<script type='text/javascript' src='include\jquery-1.8.0.min.js'></script>
@@ -12,33 +27,120 @@
 	</head>
 	<body>
 		<div id='container'>
+			<input id='switch' type='button' value='Start' ></input>
+			<input id='revers' type='button' value='Reverse'></input>
+		</div>
 			<script type='text/javascript'>
+
+				function advance(circleArc){
+					circleArc.transitionTo( {
+						endAngle: circleArc.getEndAngle() + .1 * 2 * Math.PI, 
+						easing: 'bounce-ease-out', 
+						duration: 1, 
+					});
+					//circleArc.getParent().draw();
+				};
+
+				// Gera cores de tons pasteis.
+				function corPastel(){
+					var r = (Math.round(Math.random()* 127) + 127).toString(16);
+					var g = (Math.round(Math.random()* 127) + 127).toString(16);
+					var b = (Math.round(Math.random()* 127) + 127).toString(16);
+					return '#' + r + g + b;
+				}
+	
 				var stage = new Kinetic.Stage({
 					container: 'container', 
 					width: 300, 
 					height: 300, 
 					});
+			
+				var start = Math.PI/2;
 
 				var circle = new Kinetic.CircleArc({
 					radius: 150, 
 					x: 150, 
 					y: 150, 
-					startAngle: Math.PI,
-					endAngle: Math.PI/2, 
-					fill: 'black'
+					startAngle: start, 
+					endAngle: (start + Math.PI/2) % (2 * Math.PI), 
+					fill: corPastel(), 
+					stroke: 'black', 
 					});
-			
-//				var circle2 = new Kinetic.Circle({
-//					radius: 10, 
-//					x: 150, 
-//					y: 150, 
-//					fill: 'yellow'
-//					});
 
 				var layer = new Kinetic.Layer();
 				layer.add(circle);
-				layer.add(circle2);
+
+				function upText(t, a, b, c){
+					t.setText('S: ' + a + "\nE: " + b + "\nD: " + (b-a) + "\n" + c );
+				}
+
+        var simpleText = new Kinetic.Text({
+          x: 100,
+          y: 240,
+          text: '', 
+          fontSize: 12,
+          fontFamily: "Calibri",
+          textFill: "black"
+        });
+				
+				upText(simpleText, circle.getStartAngle(), circle.getEndAngle(), 0);
+
+				layer.add(simpleText);
 				stage.add(layer);
+
+				// .2/1000 radians per milisecond.
+				var angularSpeed = .2 * Math.PI / 1000; 
+
+				var backwards = false;
+				var randomizer = Math.random()/2+1;
+
+				var anim = new Kinetic.Animation ({
+					func: function(frame){
+						var end   = circle.getEndAngle();
+						var start = circle.getStartAngle();
+						var accel = (Math.tan(Math.sin(frame.time/800)+Math.cos(frame.time/800)))/2;
+						var racel = accel*accel*randomizer;
+
+						if (backwards){
+							var newEnd = end - angularSpeed * frame.timeDiff * racel;
+							var newSta = start + angularSpeed * frame.timeDiff * accel;
+							if( newEnd - newSta < 0){ $('#revers').click(); newEnd = newSta + .01;}
+						} else{ //not backwards
+							var newEnd = end + angularSpeed/2 * frame.timeDiff * accel;
+							var newSta = start - angularSpeed * frame.timeDiff * racel/2;
+							if (newEnd - newSta > 2 * Math.PI){ $('#revers').click(); return};
+						}
+							circle.setEndAngle(newEnd);
+							circle.setStartAngle(newSta);
+
+						upText(simpleText, start, end, accel);
+					},
+
+					node: layer, 
+				});
+
+				var stopped = true;
+				$('#switch').on('click', function(){
+						stopped? anim.start() : anim.stop();
+						stopped = stopped? false: true;
+						this.value = !stopped? 'Stop': 'Start';
+				});
+				$('#revers').on('click', function(){
+					backwards = backwards? false: true;
+					this.style.color = backwards? 'red': 'black';
+					circle.setFill(corPastel());
+					$('canvas').css({'background': corPastel()});
+					randomizer = Math.random()/2+1;
+				});
+				$(window).on('keydown', function(evt){
+					if (evt.keyCode === 32){
+						if (evt.ctrlKey){
+							$('#revers').click();
+							return;
+						}
+						$('#switch').click()
+					}
+				});
 
 			</script>
 	</body>
